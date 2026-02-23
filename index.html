@@ -1,350 +1,489 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JCB Investment Properties LLC – Monthly Cashflow</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #222; padding: 24px; }
-  .container { max-width: 1200px; margin: 0 auto; }
-  h1 { font-size: 24px; color: #1a1a1a; margin-bottom: 4px; }
-  .subtitle { font-size: 14px; color: #666; font-style: italic; margin-bottom: 2px; }
-  .note { font-size: 12px; color: #cc0000; font-style: italic; margin-bottom: 20px; }
-  .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 20px; overflow-x: auto; }
-  .card-title { font-size: 16px; font-weight: 700; color: #2F5496; margin-bottom: 12px; border-bottom: 2px solid #2F5496; padding-bottom: 6px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: #2F5496; color: #fff; padding: 8px 10px; text-align: center; font-weight: 600; white-space: nowrap; }
-  th:first-child { text-align: left; }
-  td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
-  td:first-child { text-align: left; }
-  td:not(:first-child) { text-align: right; white-space: nowrap; }
-  .section-label { font-weight: 700; color: #2F5496; font-size: 13px; padding-top: 10px; }
-  .subsection-label { font-weight: 600; font-style: italic; color: #666; font-size: 12px; }
-  .subtotal td { background: #e9edf4; font-weight: 600; font-style: italic; }
-  .total td { background: #d6e4f0; font-weight: 700; border-top: 2px solid #2F5496; border-bottom: 2px solid #2F5496; }
-  .net td { font-weight: 700; font-size: 14px; border-top: 3px double #2F5496; border-bottom: 3px double #2F5496; }
-  .highlight td { background: #daeef3; color: #0000ff; }
-  .neg { color: #cc0000; }
-  .pos { color: #1a7a1a; }
-  .due-date { text-align: center !important; font-size: 12px; color: #555; }
-  .notes { font-size: 11px; color: #666; text-align: left !important; }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JCB Reserve Monitor</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.70);
+      --muted2: rgba(255,255,255,0.55);
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 18px;
 
-  /* Debt service table */
-  .debt-header th { background: #548235; }
-  .debt-total td { background: #ffc7ce; font-weight: 700; color: #cc0000; border-top: 2px solid #cc0000; }
+      --danger: #ff4d4f;
+      --warn: #ffcc00;
+      --info: #60a5fa;
+      --ok: #34d399;
+    }
 
-  /* Operating expenses table */
-  .ops-header th { background: #bf8f00; }
-  .ops-total td { background: #d6e4f0; font-weight: 700; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1100px 700px at 15% 15%, rgba(96,165,250,0.18), transparent 60%),
+                  radial-gradient(900px 600px at 85% 25%, rgba(52,211,153,0.12), transparent 55%),
+                  radial-gradient(900px 600px at 45% 90%, rgba(255,204,0,0.10), transparent 55%),
+                  var(--bg);
+      min-height: 100vh;
+      padding: 24px;
+    }
 
-  /* Breakeven */
-  .breakeven td { font-size: 14px; }
-  .breakeven-total td { background: #ffc7ce; font-weight: 700; color: #cc0000; font-size: 15px; border-top: 2px solid #cc0000; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .header {
+      display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    h1 { font-size: 22px; margin: 0; letter-spacing: 0.2px; }
+    .sub { color: var(--muted); margin-top: 6px; font-size: 13px; line-height: 1.4; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
-  /* Summary cards */
-  .summary-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-  .summary-card { flex: 1; min-width: 220px; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 16px; text-align: center; }
-  .summary-card .label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .summary-card .value { font-size: 22px; font-weight: 700; }
-  .summary-card.debt .value { color: #cc0000; }
-  .summary-card.ops .value { color: #bf8f00; }
-  .summary-card.need .value { color: #cc0000; }
-  .summary-card.need { border: 2px solid #cc0000; }
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn:hover { background: rgba(255,255,255,0.10); }
+    .btn:active { transform: translateY(1px); }
+    .btn.secondary { background: transparent; box-shadow: none; }
+    .btn.secondary:hover { background: rgba(255,255,255,0.06); }
 
-  .timestamp { text-align: center; font-size: 11px; color: #999; margin-top: 20px; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+    }
+    @media (max-width: 920px) {
+      .grid { grid-template-columns: 1fr; }
+    }
 
-  @media print {
-    body { background: #fff; padding: 12px; }
-    .card { box-shadow: none; border: 1px solid #ddd; }
-    .summary-card { box-shadow: none; border: 1px solid #ddd; }
-  }
-</style>
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .card h2 { font-size: 14px; margin: 0 0 12px; color: var(--muted); font-weight: 700; letter-spacing: 0.25px; text-transform: uppercase; }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 620px) { .inputs { grid-template-columns: 1fr; } }
+
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    input {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+    input:focus { border-color: rgba(96,165,250,0.7); box-shadow: 0 0 0 4px rgba(96,165,250,0.16); }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 620px) { .metrics { grid-template-columns: 1fr; } }
+
+    .metric {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 86px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .metric .k { font-size: 12px; color: var(--muted); }
+    .metric .v { font-size: 22px; font-weight: 800; letter-spacing: 0.2px; }
+    .metric .s { font-size: 12px; color: var(--muted2); margin-top: 4px; }
+
+    .statusRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px dashed rgba(255,255,255,0.18);
+      border-radius: 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.4px;
+      border: 1px solid rgba(255,255,255,0.18);
+      text-transform: uppercase;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 999px; background: currentColor; opacity: 0.95; }
+
+    .note { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .hr { height: 1px; background: rgba(255,255,255,0.12); margin: 14px 0; border: 0; }
+
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; color: var(--muted); }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .row > * { flex: 1; min-width: 200px; }
+
+    .small { font-size: 12px; color: var(--muted2); }
+    .right { text-align: right; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(0,0,0,0.65);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 13px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
 </head>
 <body>
-<div class="container">
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>JCB Reserve Monitor</h1>
+        <div class="sub">
+          Quick daily liquidity check: total cash, runway, reserve status, and time-to-target.
+          <span class="mono">All data stays in this browser (local storage) unless you export it.</span>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn" id="btnSave">Save</button>
+        <button class="btn secondary" id="btnLoad">Load</button>
+        <button class="btn secondary" id="btnExport">Export JSON</button>
+        <button class="btn secondary" id="btnImport">Import JSON</button>
+        <button class="btn secondary" id="btnReset">Reset</button>
+      </div>
+    </div>
 
-<h1>JCB Investment Properties LLC</h1>
-<div class="subtitle">Monthly Cashflow Analysis (Dec 2025 – Feb 2026)</div>
-<div class="note">Note: Feb 2026 data is partial (through 2/19). Inter-account transfers &amp; wires excluded.</div>
+    <div class="grid">
+      <div class="card">
+        <h2>Inputs</h2>
 
-<!-- Summary Cards -->
-<div class="summary-row">
-  <div class="summary-card debt">
-    <div class="label">Monthly Debt Service</div>
-    <div class="value">$46,746</div>
+        <div class="inputs">
+          <div>
+            <label for="operating">Operating Balance</label>
+            <input id="operating" type="number" step="0.01" value="9233.50" />
+          </div>
+          <div>
+            <label for="savings">Savings Balance</label>
+            <input id="savings" type="number" step="0.01" value="5000.00" />
+          </div>
+          <div>
+            <label for="pinnacle">Pinnacle Balance</label>
+            <input id="pinnacle" type="number" step="0.01" value="3837.24" />
+          </div>
+          <div>
+            <label for="avgMonthly">Avg Monthly Expenses (baseline)</label>
+            <input id="avgMonthly" type="number" step="0.01" value="60000.00" />
+          </div>
+
+          <div>
+            <label for="floorTarget">Reserve Floor Target</label>
+            <input id="floorTarget" type="number" step="0.01" value="120000.00" />
+          </div>
+          <div>
+            <label for="strongTarget">Strong Target</label>
+            <input id="strongTarget" type="number" step="0.01" value="150000.00" />
+          </div>
+
+          <div>
+            <label for="monthlySurplus">Expected Monthly Surplus (post-refi)</label>
+            <input id="monthlySurplus" type="number" step="0.01" value="22000.00" />
+          </div>
+          <div>
+            <label for="monthlyAnchor">Monthly Anchor Payment (1st)</label>
+            <input id="monthlyAnchor" type="number" step="0.01" value="9321.03" />
+          </div>
+
+          <div>
+            <label for="annualTaxes">Annual Property Taxes (for escrow)</label>
+            <input id="annualTaxes" type="number" step="0.01" value="40000.00" />
+          </div>
+          <div>
+            <label for="minCashBuffer">Minimum Cash Buffer (extra safety)</label>
+            <input id="minCashBuffer" type="number" step="0.01" value="15000.00" />
+          </div>
+        </div>
+
+        <hr class="hr" />
+
+        <div class="note">
+          <b>Status logic</b> is intentionally blunt:
+          <ul>
+            <li><span class="mono">DANGER</span>: Total cash &lt; 1 month expenses</li>
+            <li><span class="mono">STABILIZING</span>: 1 month ≤ cash &lt; Floor target</li>
+            <li><span class="mono">REBUILDING</span>: Floor ≤ cash &lt; Strong target</li>
+            <li><span class="mono">FORTRESS</span>: cash ≥ Strong target</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Reserve Dashboard</h2>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="k">Total Liquidity</div>
+            <div class="v" id="totalCash">$0</div>
+            <div class="s" id="totalCashSub">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="k">Months of Runway</div>
+            <div class="v" id="runway">0.00</div>
+            <div class="s" id="runwaySub">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="k">Gap to Floor</div>
+            <div class="v" id="gapFloor">$0</div>
+            <div class="s">Floor = reserve minimum</div>
+          </div>
+
+          <div class="metric">
+            <div class="k">Gap to Target</div>
+            <div class="v" id="gapTarget">$0</div>
+            <div class="s">Target = “distributions allowed” zone</div>
+          </div>
+
+          <div class="metric">
+            <div class="k">Monthly Tax Escrow</div>
+            <div class="v" id="taxEscrow">$0</div>
+            <div class="s">Annual taxes / 12</div>
+          </div>
+
+          <div class="metric">
+            <div class="k">Months to Strong Target</div>
+            <div class="v" id="monthsToTarget">—</div>
+            <div class="s">Using expected monthly surplus</div>
+          </div>
+        </div>
+
+        <div class="statusRow">
+          <div class="row" style="align-items:center;">
+            <div>
+              <div class="badge" id="statusBadge"><span class="dot"></span><span id="statusText">—</span></div>
+              <div class="small" id="statusHint" style="margin-top:8px;">—</div>
+            </div>
+            <div class="right" style="min-width: 240px;">
+              <div class="small">Available above protected base</div>
+              <div class="v" style="font-size:20px;" id="availableAboveBuffer">$0</div>
+              <div class="small" id="distributionRule">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">
+          Tip: click <b>Save</b> after updates. This is a lightweight “truth panel” for JCB liquidity —
+          not a full forecast engine.
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="summary-card ops">
-    <div class="label">Est. Monthly Operating</div>
-    <div class="value">$2,327</div>
-  </div>
-  <div class="summary-card need">
-    <div class="label">Total Monthly Cash Needed</div>
-    <div class="value">$49,073</div>
-  </div>
-</div>
 
-<!-- Monthly Cashflow Table -->
-<div class="card">
-  <div class="card-title">Monthly Cashflow Detail</div>
-  <table>
-    <thead>
-      <tr>
-        <th style="width:30%">Category</th>
-        <th>Dec 2025</th>
-        <th>Jan 2026</th>
-        <th>Feb 2026*</th>
-        <th>Monthly Avg</th>
-        <th>Due Date</th>
-        <th style="width:18%">Property / Notes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- INCOME -->
-      <tr><td colspan="7" class="section-label">OPERATING INCOME</td></tr>
-      <tr>
-        <td>Tristar Physical Therapy (Rent)</td>
-        <td>$39,850.00</td><td>$12,250.00</td><td>$11,100.00</td><td>$21,066.67</td>
-        <td></td><td class="notes">Expect ~$39-42K when all 4 deposits hit</td>
-      </tr>
-      <tr>
-        <td>Cherokee Medical (Rent)</td>
-        <td>–</td><td>–</td><td>$1,800.00</td><td>$1,800.00</td>
-        <td></td><td class="notes">New in Feb; recurring rent</td>
-      </tr>
-      <tr>
-        <td>Venmo Deposits</td>
-        <td>$2,166.89</td><td>$1,103.00</td><td>$700.00</td><td>$1,323.30</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Mobile Check Deposits</td>
-        <td>$2,340.93</td><td>$2,817.41</td><td>–</td><td>$2,579.17</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Adjusted Interest</td>
-        <td>–</td><td>$400.00</td><td>–</td><td>$400.00</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Bank of America</td>
-        <td>–</td><td>–</td><td>$0.48</td><td>$0.48</td>
-        <td></td><td></td>
-      </tr>
-      <tr class="total">
-        <td>TOTAL INCOME</td>
-        <td>$44,357.82</td><td>$16,570.41</td><td>$13,600.48</td><td>$27,169.61</td>
-        <td></td><td></td>
-      </tr>
+  <input id="fileInput" type="file" accept="application/json" style="display:none;" />
+  <div class="toast" id="toast">Saved.</div>
 
-      <!-- EXPENSES -->
-      <tr><td colspan="7" class="section-label" style="padding-top:16px">OPERATING EXPENSES</td></tr>
-      <tr><td colspan="7" class="subsection-label">Mortgages &amp; Loan Payments</td></tr>
+  <script>
+    const $ = (id) => document.getElementById(id);
 
-      <tr>
-        <td>Old Natl – Morristown (1st Mtg)</td>
-        <td>$16,429.76</td><td>$16,429.76</td><td>$16,429.76</td><td>$16,429.76</td>
-        <td class="due-date">~15th</td><td class="notes">Morristown property</td>
-      </tr>
-      <tr>
-        <td>Old Natl – Rogersville</td>
-        <td>$4,509.23</td><td>$4,509.23</td><td>$4,509.23</td><td>$4,509.23</td>
-        <td class="due-date">~15th</td><td class="notes">Rogersville property</td>
-      </tr>
-      <tr>
-        <td>Old Natl – Maryville</td>
-        <td>–</td><td>$3,003.20</td><td>$3,003.20</td><td>$3,003.20</td>
-        <td class="due-date">~8th</td><td class="notes">Maryville property</td>
-      </tr>
-      <tr>
-        <td>Old Natl – Newport</td>
-        <td>$1,210.49</td><td>$1,210.49</td><td>$1,210.49</td><td>$1,210.49</td>
-        <td class="due-date">~8th</td><td class="notes">Newport property</td>
-      </tr>
-      <tr class="highlight">
-        <td>Old Natl – Morristown (2nd Mtg Refi)</td>
-        <td>–</td><td>$2,687.53</td><td>$2,687.53</td><td>$2,687.53</td>
-        <td class="due-date">~15th</td><td class="notes">2nd term loan refi – Morristown</td>
-      </tr>
-      <tr>
-        <td>JCB Termed Out Loan (PNFP)</td>
-        <td>–</td><td>$4,916.97</td><td>–</td><td>$4,916.97</td>
-        <td class="due-date">~28th</td><td class="notes">JCB termed out loan</td>
-      </tr>
-      <tr>
-        <td>Truist – 193 Leeward Island</td>
-        <td>$2,393.56</td><td>$2,393.56</td><td>$2,393.56</td><td>$2,393.56</td>
-        <td class="due-date">~3rd-6th</td><td class="notes">193 Leeward Island Townhome</td>
-      </tr>
-      <tr>
-        <td>Mr. Cooper – 2240 Shore Drive</td>
-        <td>$2,274.65</td><td>$2,274.65</td><td>$2,274.65</td><td>$2,274.65</td>
-        <td class="due-date">~3rd-5th</td><td class="notes">2240 Shore Drive</td>
-      </tr>
-      <tr class="highlight">
-        <td><strong>First Century Loan Payment</strong></td>
-        <td>–</td><td>$9,321.03</td><td>$9,321.03</td><td>$9,321.03</td>
-        <td class="due-date">1st</td><td class="notes">Starting Jan 2026</td>
-      </tr>
-      <tr class="subtotal">
-        <td>&nbsp;&nbsp;Subtotal: Mortgages &amp; Loans</td>
-        <td>$26,817.69</td><td>$46,746.42</td><td>$41,829.45</td><td>$38,464.52</td>
-        <td></td><td></td>
-      </tr>
+    const fields = [
+      "operating","savings","pinnacle","avgMonthly",
+      "floorTarget","strongTarget","monthlySurplus","monthlyAnchor",
+      "annualTaxes","minCashBuffer"
+    ];
 
-      <tr><td colspan="7" class="subsection-label" style="padding-top:12px">Property Operations &amp; Other</td></tr>
-      <tr>
-        <td>Maupins Lawncare</td>
-        <td>$1,155.00</td><td>$1,155.00</td><td>$1,155.00</td><td>$1,155.00</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Torode Landscaping</td>
-        <td>$130.00</td><td>–</td><td>$260.00</td><td>$195.00</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>FPL Electric</td>
-        <td>$142.41</td><td>$160.67</td><td>–</td><td>$151.54</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>HOA Assessment</td>
-        <td>–</td><td>$910.95</td><td>–</td><td>$910.95</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Ladder Life Insurance</td>
-        <td>–</td><td>–</td><td>$44.29</td><td>$44.29</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Intuit (QuickBooks/Payroll)</td>
-        <td>–</td><td>–</td><td>$137.50</td><td>$137.50</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Jordan Black Personal</td>
-        <td>–</td><td>$5,000.00</td><td>–</td><td>$5,000.00</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Credit Card 4636 Payment</td>
-        <td>–</td><td>$203.02</td><td>$290.00</td><td>$246.51</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>US Bank Service Charge</td>
-        <td>$68.00</td><td>$42.00</td><td>–</td><td>$55.00</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Cardmember Services</td>
-        <td>–</td><td>–</td><td>$63.00</td><td>$63.00</td>
-        <td></td><td></td>
-      </tr>
-      <tr>
-        <td>Bank of America</td>
-        <td>–</td><td>–</td><td>$1,000.48</td><td>$1,000.48</td>
-        <td></td><td></td>
-      </tr>
-      <tr class="subtotal">
-        <td>&nbsp;&nbsp;Subtotal: Property Ops &amp; Other</td>
-        <td>$1,495.41</td><td>$7,471.64</td><td>$2,950.27</td><td>$8,959.27</td>
-        <td></td><td></td>
-      </tr>
+    function n(v) {
+      const x = Number(v);
+      return Number.isFinite(x) ? x : 0;
+    }
+    function money(x) {
+      const v = n(x);
+      return v.toLocaleString(undefined, { style: "currency", currency: "USD" });
+    }
+    function fixed(x, digits=2) {
+      const v = n(x);
+      return v.toFixed(digits);
+    }
 
-      <tr class="total">
-        <td>TOTAL EXPENSES</td>
-        <td>$28,313.10</td><td>$54,218.06</td><td>$44,779.72</td><td>$42,436.96</td>
-        <td></td><td></td>
-      </tr>
+    function statusFor(totalCash, avgMonthly, floor, strong) {
+      if (totalCash < avgMonthly) return { key: "DANGER", color: "var(--danger)", hint: "Below 1 month runway. Freeze non-essentials; protect debt service timing." };
+      if (totalCash < floor)      return { key: "STABILIZING", color: "var(--warn)",   hint: "Above 1 month runway but below floor. No distributions; rebuild reserves." };
+      if (totalCash < strong)     return { key: "REBUILDING", color: "var(--info)",   hint: "Above floor. Rebuild toward strong target before discretionary moves." };
+      return { key: "FORTRESS", color: "var(--ok)", hint: "Above strong target. Distributions allowed *down to the floor*." };
+    }
 
-      <tr class="net">
-        <td>NET OPERATING CASHFLOW</td>
-        <td class="pos">$16,044.72</td>
-        <td class="neg">($37,647.65)</td>
-        <td class="neg">($31,179.24)</td>
-        <td class="neg">($17,594.06)</td>
-        <td></td><td></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    function compute() {
+      const operating = n($("operating").value);
+      const savings   = n($("savings").value);
+      const pinnacle  = n($("pinnacle").value);
 
-<!-- Debt Service Schedule -->
-<div class="card">
-  <div class="card-title">Monthly Debt Service Schedule</div>
-  <table>
-    <thead>
-      <tr class="debt-header">
-        <th style="width:35%">Obligation</th>
-        <th>Monthly Pmt</th>
-        <th>Due Date</th>
-        <th>Property</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Old Natl – Morristown (1st Mtg)</td><td>$16,429.76</td><td class="due-date">15th</td><td class="notes">Morristown</td></tr>
-      <tr><td>Old Natl – Morristown (2nd Mtg Refi)</td><td>$2,687.53</td><td class="due-date">15th</td><td class="notes">Morristown</td></tr>
-      <tr><td>Old Natl – Rogersville</td><td>$4,509.23</td><td class="due-date">15th</td><td class="notes">Rogersville</td></tr>
-      <tr><td>Old Natl – Maryville</td><td>$3,003.20</td><td class="due-date">8th</td><td class="notes">Maryville</td></tr>
-      <tr><td>Old Natl – Newport</td><td>$1,210.49</td><td class="due-date">8th</td><td class="notes">Newport</td></tr>
-      <tr><td>JCB Termed Out Loan (PNFP)</td><td>$4,916.97</td><td class="due-date">28th</td><td class="notes">JCB entity-level</td></tr>
-      <tr><td>Truist – 193 Leeward Island</td><td>$2,393.56</td><td class="due-date">3rd-6th</td><td class="notes">193 Leeward Island</td></tr>
-      <tr><td>Mr. Cooper – 2240 Shore Drive</td><td>$2,274.65</td><td class="due-date">3rd-5th</td><td class="notes">2240 Shore Drive</td></tr>
-      <tr><td><strong>First Century Loan Payment</strong></td><td>$9,321.03</td><td class="due-date">1st</td><td class="notes">Starting Jan 2026</td></tr>
-      <tr class="debt-total">
-        <td>TOTAL MONTHLY DEBT SERVICE</td>
-        <td>$46,746.42</td><td></td><td></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+      const avgMonthly = Math.max(1, n($("avgMonthly").value));
+      const floor      = n($("floorTarget").value);
+      const strong     = n($("strongTarget").value);
+      const surplus    = n($("monthlySurplus").value);
+      const anchor     = n($("monthlyAnchor").value);
+      const annualTax  = n($("annualTaxes").value);
+      const buffer     = n($("minCashBuffer").value);
 
-<!-- Operating Expenses -->
-<div class="card">
-  <div class="card-title" style="color:#bf8f00; border-color:#bf8f00">Monthly Operating Expenses (Non-Debt)</div>
-  <table>
-    <thead>
-      <tr class="ops-header">
-        <th style="width:35%">Expense</th>
-        <th>Est. Monthly</th>
-        <th>Frequency</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Maupins Lawncare</td><td>$1,155.00</td><td class="notes">Monthly</td></tr>
-      <tr><td>Torode Landscaping</td><td>$130.00</td><td class="notes">Monthly</td></tr>
-      <tr><td>FPL Electric</td><td>$151.54</td><td class="notes">Monthly; varies</td></tr>
-      <tr><td>HOA Assessment</td><td>$303.65</td><td class="notes">Quarterly ($910.95 every 3 months)</td></tr>
-      <tr><td>Intuit (QuickBooks)</td><td>$137.50</td><td class="notes">Monthly</td></tr>
-      <tr><td>Ladder Life Insurance</td><td>$44.29</td><td class="notes">Monthly</td></tr>
-      <tr><td>US Bank Service Charge</td><td>$55.00</td><td class="notes">Monthly; varies</td></tr>
-      <tr><td>Credit Card / Misc</td><td>$350.00</td><td class="notes">Variable</td></tr>
-      <tr class="ops-total">
-        <td>EST. TOTAL OPERATING</td>
-        <td>$2,326.98</td><td></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+      const totalCash = operating + savings + pinnacle;
+      const runway = totalCash / avgMonthly;
 
-<!-- Breakeven -->
-<div class="card" style="border-left: 4px solid #cc0000;">
-  <div class="card-title" style="color:#cc0000; border-color:#cc0000">Breakeven Analysis</div>
-  <table>
-    <tbody>
-      <tr class="breakeven"><td>Total Monthly Debt Service</td><td>$46,746.42</td></tr>
-      <tr class="breakeven"><td>Est. Monthly Operating Expenses</td><td>$2,326.98</td></tr>
-      <tr class="breakeven-total"><td>TOTAL MONTHLY CASH NEEDED</td><td>$49,073.40</td></tr>
-    </tbody>
-  </table>
-</div>
+      const gapFloor = floor - totalCash;      // positive = under floor
+      const gapTarget = strong - totalCash;    // positive = under target
 
-<div class="timestamp">Generated Feb 23, 2026 | JCB Investment Properties LLC | Data: US Bank Checking *7235</div>
+      const taxEscrow = annualTax / 12;
 
-</div>
+      let monthsToTarget = "—";
+      if (surplus > 0 && gapTarget > 0) monthsToTarget = fixed(gapTarget / surplus, 1);
+      if (gapTarget <= 0) monthsToTarget = "0.0";
+
+      const st = statusFor(totalCash, avgMonthly, floor, strong);
+
+      // Protected base: floor + cash buffer + next month anchor payment + monthly tax escrow
+      const protectedBase = floor + buffer + anchor + taxEscrow;
+      const available = totalCash - protectedBase;
+
+      $("totalCash").textContent = money(totalCash);
+      $("totalCashSub").textContent = `Operating ${money(operating)} • Savings ${money(savings)} • Pinnacle ${money(pinnacle)}`;
+
+      $("runway").textContent = fixed(runway, 2);
+      $("runwaySub").textContent = `Based on avg monthly expenses ${money(avgMonthly)}`;
+
+      $("gapFloor").textContent = money(gapFloor);
+      $("gapTarget").textContent = money(gapTarget);
+
+      $("taxEscrow").textContent = money(taxEscrow);
+      $("monthsToTarget").textContent = monthsToTarget;
+
+      const badge = $("statusBadge");
+      badge.style.color = st.color;
+      $("statusText").textContent = st.key;
+      $("statusHint").textContent = st.hint;
+
+      $("availableAboveBuffer").textContent = money(available);
+
+      const distRule = $("distributionRule");
+      if (totalCash >= strong) {
+        distRule.textContent = `Distribution allowed down to floor (${money(floor)}).`;
+      } else {
+        distRule.textContent = `No distributions until ≥ strong target (${money(strong)}).`;
+      }
+    }
+
+    function getState() {
+      const state = {};
+      for (const f of fields) state[f] = n($(f).value);
+      state._savedAt = new Date().toISOString();
+      return state;
+    }
+
+    function setState(state) {
+      for (const f of fields) {
+        if (state[f] !== undefined) $(f).value = state[f];
+      }
+      compute();
+    }
+
+    function toast(msg) {
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 1400);
+    }
+
+    // Events
+    for (const f of fields) $(f).addEventListener("input", compute);
+
+    $("btnSave").addEventListener("click", () => {
+      localStorage.setItem("jcbReserveMonitor:v1", JSON.stringify(getState()));
+      toast("Saved.");
+    });
+
+    $("btnLoad").addEventListener("click", () => {
+      const raw = localStorage.getItem("jcbReserveMonitor:v1");
+      if (!raw) return toast("No saved data found.");
+      try { setState(JSON.parse(raw)); toast("Loaded."); }
+      catch { toast("Load failed (bad JSON)."); }
+    });
+
+    $("btnExport").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(getState(), null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "jcb-reserve-monitor.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    $("btnImport").addEventListener("click", () => $("fileInput").click());
+    $("fileInput").addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        setState(JSON.parse(text));
+        toast("Imported.");
+      } catch {
+        toast("Import failed.");
+      } finally {
+        e.target.value = "";
+      }
+    });
+
+    $("btnReset").addEventListener("click", () => {
+      localStorage.removeItem("jcbReserveMonitor:v1");
+      toast("Reset saved data.");
+    });
+
+    // Initial compute on load
+    compute();
+  </script>
 </body>
 </html>
