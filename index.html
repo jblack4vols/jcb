@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JCB Investment Properties LLC – Monthly Cashflow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #222; padding: 24px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 24px; color: #1a1a1a; margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: #666; font-style: italic; margin-bottom: 2px; }
+  .note { font-size: 12px; color: #cc0000; font-style: italic; margin-bottom: 20px; }
+  .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 20px; overflow-x: auto; }
+  .card-title { font-size: 16px; font-weight: 700; color: #2F5496; margin-bottom: 12px; border-bottom: 2px solid #2F5496; padding-bottom: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #2F5496; color: #fff; padding: 8px 10px; text-align: center; font-weight: 600; white-space: nowrap; }
+  th:first-child { text-align: left; }
+  td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
+  td:first-child { text-align: left; }
+  td:not(:first-child) { text-align: right; white-space: nowrap; }
+  .section-label { font-weight: 700; color: #2F5496; font-size: 13px; padding-top: 10px; }
+  .subsection-label { font-weight: 600; font-style: italic; color: #666; font-size: 12px; }
+  .subtotal td { background: #e9edf4; font-weight: 600; font-style: italic; }
+  .total td { background: #d6e4f0; font-weight: 700; border-top: 2px solid #2F5496; border-bottom: 2px solid #2F5496; }
+  .net td { font-weight: 700; font-size: 14px; border-top: 3px double #2F5496; border-bottom: 3px double #2F5496; }
+  .highlight td { background: #daeef3; color: #0000ff; }
+  .neg { color: #cc0000; }
+  .pos { color: #1a7a1a; }
+  .due-date { text-align: center !important; font-size: 12px; color: #555; }
+  .notes { font-size: 11px; color: #666; text-align: left !important; }
+
+  /* Debt service table */
+  .debt-header th { background: #548235; }
+  .debt-total td { background: #ffc7ce; font-weight: 700; color: #cc0000; border-top: 2px solid #cc0000; }
+
+  /* Operating expenses table */
+  .ops-header th { background: #bf8f00; }
+  .ops-total td { background: #d6e4f0; font-weight: 700; }
+
+  /* Breakeven */
+  .breakeven td { font-size: 14px; }
+  .breakeven-total td { background: #ffc7ce; font-weight: 700; color: #cc0000; font-size: 15px; border-top: 2px solid #cc0000; }
+
+  /* Summary cards */
+  .summary-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .summary-card { flex: 1; min-width: 220px; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 16px; text-align: center; }
+  .summary-card .label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .summary-card .value { font-size: 22px; font-weight: 700; }
+  .summary-card.debt .value { color: #cc0000; }
+  .summary-card.ops .value { color: #bf8f00; }
+  .summary-card.need .value { color: #cc0000; }
+  .summary-card.need { border: 2px solid #cc0000; }
+
+  .timestamp { text-align: center; font-size: 11px; color: #999; margin-top: 20px; }
+
+  @media print {
+    body { background: #fff; padding: 12px; }
+    .card { box-shadow: none; border: 1px solid #ddd; }
+    .summary-card { box-shadow: none; border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>JCB Investment Properties LLC</h1>
+<div class="subtitle">Monthly Cashflow Analysis (Dec 2025 – Feb 2026)</div>
+<div class="note">Note: Feb 2026 data is partial (through 2/19). Inter-account transfers &amp; wires excluded.</div>
+
+<!-- Summary Cards -->
+<div class="summary-row">
+  <div class="summary-card debt">
+    <div class="label">Monthly Debt Service</div>
+    <div class="value">$46,746</div>
+  </div>
+  <div class="summary-card ops">
+    <div class="label">Est. Monthly Operating</div>
+    <div class="value">$2,327</div>
+  </div>
+  <div class="summary-card need">
+    <div class="label">Total Monthly Cash Needed</div>
+    <div class="value">$49,073</div>
+  </div>
+</div>
+
+<!-- Monthly Cashflow Table -->
+<div class="card">
+  <div class="card-title">Monthly Cashflow Detail</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30%">Category</th>
+        <th>Dec 2025</th>
+        <th>Jan 2026</th>
+        <th>Feb 2026*</th>
+        <th>Monthly Avg</th>
+        <th>Due Date</th>
+        <th style="width:18%">Property / Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- INCOME -->
+      <tr><td colspan="7" class="section-label">OPERATING INCOME</td></tr>
+      <tr>
+        <td>Tristar Physical Therapy (Rent)</td>
+        <td>$39,850.00</td><td>$12,250.00</td><td>$11,100.00</td><td>$21,066.67</td>
+        <td></td><td class="notes">Expect ~$39-42K when all 4 deposits hit</td>
+      </tr>
+      <tr>
+        <td>Cherokee Medical (Rent)</td>
+        <td>–</td><td>–</td><td>$1,800.00</td><td>$1,800.00</td>
+        <td></td><td class="notes">New in Feb; recurring rent</td>
+      </tr>
+      <tr>
+        <td>Venmo Deposits</td>
+        <td>$2,166.89</td><td>$1,103.00</td><td>$700.00</td><td>$1,323.30</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Mobile Check Deposits</td>
+        <td>$2,340.93</td><td>$2,817.41</td><td>–</td><td>$2,579.17</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Adjusted Interest</td>
+        <td>–</td><td>$400.00</td><td>–</td><td>$400.00</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Bank of America</td>
+        <td>–</td><td>–</td><td>$0.48</td><td>$0.48</td>
+        <td></td><td></td>
+      </tr>
+      <tr class="total">
+        <td>TOTAL INCOME</td>
+        <td>$44,357.82</td><td>$16,570.41</td><td>$13,600.48</td><td>$27,169.61</td>
+        <td></td><td></td>
+      </tr>
+
+      <!-- EXPENSES -->
+      <tr><td colspan="7" class="section-label" style="padding-top:16px">OPERATING EXPENSES</td></tr>
+      <tr><td colspan="7" class="subsection-label">Mortgages &amp; Loan Payments</td></tr>
+
+      <tr>
+        <td>Old Natl – Morristown (1st Mtg)</td>
+        <td>$16,429.76</td><td>$16,429.76</td><td>$16,429.76</td><td>$16,429.76</td>
+        <td class="due-date">~15th</td><td class="notes">Morristown property</td>
+      </tr>
+      <tr>
+        <td>Old Natl – Rogersville</td>
+        <td>$4,509.23</td><td>$4,509.23</td><td>$4,509.23</td><td>$4,509.23</td>
+        <td class="due-date">~15th</td><td class="notes">Rogersville property</td>
+      </tr>
+      <tr>
+        <td>Old Natl – Maryville</td>
+        <td>–</td><td>$3,003.20</td><td>$3,003.20</td><td>$3,003.20</td>
+        <td class="due-date">~8th</td><td class="notes">Maryville property</td>
+      </tr>
+      <tr>
+        <td>Old Natl – Newport</td>
+        <td>$1,210.49</td><td>$1,210.49</td><td>$1,210.49</td><td>$1,210.49</td>
+        <td class="due-date">~8th</td><td class="notes">Newport property</td>
+      </tr>
+      <tr class="highlight">
+        <td>Old Natl – Morristown (2nd Mtg Refi)</td>
+        <td>–</td><td>$2,687.53</td><td>$2,687.53</td><td>$2,687.53</td>
+        <td class="due-date">~15th</td><td class="notes">2nd term loan refi – Morristown</td>
+      </tr>
+      <tr>
+        <td>JCB Termed Out Loan (PNFP)</td>
+        <td>–</td><td>$4,916.97</td><td>–</td><td>$4,916.97</td>
+        <td class="due-date">~28th</td><td class="notes">JCB termed out loan</td>
+      </tr>
+      <tr>
+        <td>Truist – 193 Leeward Island</td>
+        <td>$2,393.56</td><td>$2,393.56</td><td>$2,393.56</td><td>$2,393.56</td>
+        <td class="due-date">~3rd-6th</td><td class="notes">193 Leeward Island Townhome</td>
+      </tr>
+      <tr>
+        <td>Mr. Cooper – 2240 Shore Drive</td>
+        <td>$2,274.65</td><td>$2,274.65</td><td>$2,274.65</td><td>$2,274.65</td>
+        <td class="due-date">~3rd-5th</td><td class="notes">2240 Shore Drive</td>
+      </tr>
+      <tr class="highlight">
+        <td><strong>First Century Loan Payment</strong></td>
+        <td>–</td><td>$9,321.03</td><td>$9,321.03</td><td>$9,321.03</td>
+        <td class="due-date">1st</td><td class="notes">Starting Jan 2026</td>
+      </tr>
+      <tr class="subtotal">
+        <td>&nbsp;&nbsp;Subtotal: Mortgages &amp; Loans</td>
+        <td>$26,817.69</td><td>$46,746.42</td><td>$41,829.45</td><td>$38,464.52</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr><td colspan="7" class="subsection-label" style="padding-top:12px">Property Operations &amp; Other</td></tr>
+      <tr>
+        <td>Maupins Lawncare</td>
+        <td>$1,155.00</td><td>$1,155.00</td><td>$1,155.00</td><td>$1,155.00</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Torode Landscaping</td>
+        <td>$130.00</td><td>–</td><td>$260.00</td><td>$195.00</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>FPL Electric</td>
+        <td>$142.41</td><td>$160.67</td><td>–</td><td>$151.54</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>HOA Assessment</td>
+        <td>–</td><td>$910.95</td><td>–</td><td>$910.95</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Ladder Life Insurance</td>
+        <td>–</td><td>–</td><td>$44.29</td><td>$44.29</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Intuit (QuickBooks/Payroll)</td>
+        <td>–</td><td>–</td><td>$137.50</td><td>$137.50</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Jordan Black Personal</td>
+        <td>–</td><td>$5,000.00</td><td>–</td><td>$5,000.00</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Credit Card 4636 Payment</td>
+        <td>–</td><td>$203.02</td><td>$290.00</td><td>$246.51</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>US Bank Service Charge</td>
+        <td>$68.00</td><td>$42.00</td><td>–</td><td>$55.00</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Cardmember Services</td>
+        <td>–</td><td>–</td><td>$63.00</td><td>$63.00</td>
+        <td></td><td></td>
+      </tr>
+      <tr>
+        <td>Bank of America</td>
+        <td>–</td><td>–</td><td>$1,000.48</td><td>$1,000.48</td>
+        <td></td><td></td>
+      </tr>
+      <tr class="subtotal">
+        <td>&nbsp;&nbsp;Subtotal: Property Ops &amp; Other</td>
+        <td>$1,495.41</td><td>$7,471.64</td><td>$2,950.27</td><td>$8,959.27</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr class="total">
+        <td>TOTAL EXPENSES</td>
+        <td>$28,313.10</td><td>$54,218.06</td><td>$44,779.72</td><td>$42,436.96</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr class="net">
+        <td>NET OPERATING CASHFLOW</td>
+        <td class="pos">$16,044.72</td>
+        <td class="neg">($37,647.65)</td>
+        <td class="neg">($31,179.24)</td>
+        <td class="neg">($17,594.06)</td>
+        <td></td><td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Debt Service Schedule -->
+<div class="card">
+  <div class="card-title">Monthly Debt Service Schedule</div>
+  <table>
+    <thead>
+      <tr class="debt-header">
+        <th style="width:35%">Obligation</th>
+        <th>Monthly Pmt</th>
+        <th>Due Date</th>
+        <th>Property</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Old Natl – Morristown (1st Mtg)</td><td>$16,429.76</td><td class="due-date">15th</td><td class="notes">Morristown</td></tr>
+      <tr><td>Old Natl – Morristown (2nd Mtg Refi)</td><td>$2,687.53</td><td class="due-date">15th</td><td class="notes">Morristown</td></tr>
+      <tr><td>Old Natl – Rogersville</td><td>$4,509.23</td><td class="due-date">15th</td><td class="notes">Rogersville</td></tr>
+      <tr><td>Old Natl – Maryville</td><td>$3,003.20</td><td class="due-date">8th</td><td class="notes">Maryville</td></tr>
+      <tr><td>Old Natl – Newport</td><td>$1,210.49</td><td class="due-date">8th</td><td class="notes">Newport</td></tr>
+      <tr><td>JCB Termed Out Loan (PNFP)</td><td>$4,916.97</td><td class="due-date">28th</td><td class="notes">JCB entity-level</td></tr>
+      <tr><td>Truist – 193 Leeward Island</td><td>$2,393.56</td><td class="due-date">3rd-6th</td><td class="notes">193 Leeward Island</td></tr>
+      <tr><td>Mr. Cooper – 2240 Shore Drive</td><td>$2,274.65</td><td class="due-date">3rd-5th</td><td class="notes">2240 Shore Drive</td></tr>
+      <tr><td><strong>First Century Loan Payment</strong></td><td>$9,321.03</td><td class="due-date">1st</td><td class="notes">Starting Jan 2026</td></tr>
+      <tr class="debt-total">
+        <td>TOTAL MONTHLY DEBT SERVICE</td>
+        <td>$46,746.42</td><td></td><td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Operating Expenses -->
+<div class="card">
+  <div class="card-title" style="color:#bf8f00; border-color:#bf8f00">Monthly Operating Expenses (Non-Debt)</div>
+  <table>
+    <thead>
+      <tr class="ops-header">
+        <th style="width:35%">Expense</th>
+        <th>Est. Monthly</th>
+        <th>Frequency</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Maupins Lawncare</td><td>$1,155.00</td><td class="notes">Monthly</td></tr>
+      <tr><td>Torode Landscaping</td><td>$130.00</td><td class="notes">Monthly</td></tr>
+      <tr><td>FPL Electric</td><td>$151.54</td><td class="notes">Monthly; varies</td></tr>
+      <tr><td>HOA Assessment</td><td>$303.65</td><td class="notes">Quarterly ($910.95 every 3 months)</td></tr>
+      <tr><td>Intuit (QuickBooks)</td><td>$137.50</td><td class="notes">Monthly</td></tr>
+      <tr><td>Ladder Life Insurance</td><td>$44.29</td><td class="notes">Monthly</td></tr>
+      <tr><td>US Bank Service Charge</td><td>$55.00</td><td class="notes">Monthly; varies</td></tr>
+      <tr><td>Credit Card / Misc</td><td>$350.00</td><td class="notes">Variable</td></tr>
+      <tr class="ops-total">
+        <td>EST. TOTAL OPERATING</td>
+        <td>$2,326.98</td><td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Breakeven -->
+<div class="card" style="border-left: 4px solid #cc0000;">
+  <div class="card-title" style="color:#cc0000; border-color:#cc0000">Breakeven Analysis</div>
+  <table>
+    <tbody>
+      <tr class="breakeven"><td>Total Monthly Debt Service</td><td>$46,746.42</td></tr>
+      <tr class="breakeven"><td>Est. Monthly Operating Expenses</td><td>$2,326.98</td></tr>
+      <tr class="breakeven-total"><td>TOTAL MONTHLY CASH NEEDED</td><td>$49,073.40</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="timestamp">Generated Feb 23, 2026 | JCB Investment Properties LLC | Data: US Bank Checking *7235</div>
+
+</div>
+</body>
+</html>
